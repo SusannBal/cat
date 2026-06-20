@@ -30,6 +30,8 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+const BASE_IMG = 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/public/img_productos'
+
 const initialProducts = [
   {
     name: 'cable 3 en 1',
@@ -41,7 +43,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-01',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_01.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wMS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4NTcxLCJleHAiOjE4MTM1MTQ1NzF9.dUmz_5NBsu2Xd3pgKO9q30PsxM5pDREqztvAb1h3rkM'
+    image_url: `${BASE_IMG}/img_01.png?width=300&format=webp`
   },
   {
     name: 'cable de 2m(c a c)',
@@ -53,7 +55,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-02',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_02.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wMi5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4NzM2LCJleHAiOjE4MTM1MTQ3MzZ9.NP32CJJ93Pgi6LvstBcyUyPI2Ts9ig0E8t9NRGjW9MY'
+    image_url: `${BASE_IMG}/img_02.png?width=300&format=webp`
   },
   {
     name: 'cable xiomi con cubo',
@@ -65,7 +67,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-03',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_03.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wMy5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTgwNTA5LCJleHAiOjE4MTM1MTY1MDl9.nGeJey9c80KY3r7_eHFTM4_3jKD5OZlKCsoF7AJV5YM'
+    image_url: `${BASE_IMG}/img_03.png?width=300&format=webp`
   },
   {
     name: 'cable 2 en 1(c a lingning)',
@@ -77,7 +79,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-04',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_04.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wNC5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4NzUxLCJleHAiOjE4MTM1MTQ3NTF9.nIths1IJNq8I_tu1XADbUlmJlXT6ee7iNG5pBQm4GUI'
+    image_url: `${BASE_IMG}/img_04.png?width=300&format=webp`
   },
   {
     name: 'cable naranja (c a c)',
@@ -89,7 +91,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-05',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_05.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wNS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4NzcwLCJleHAiOjE4MTM1MTQ3NzB9.QdMcFpdkQWSIrM_O5bV7hbqi6_3GVtcNEkGdwvxP6_A'
+    image_url: `${BASE_IMG}/img_05.png?width=300&format=webp`
   },
   {
     name: 'cable negro trenzado (usb a c)',
@@ -101,7 +103,7 @@ const initialProducts = [
     initial_stock: 12,
     installments: 'Pago único',
     code: 'CAB-06',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_06.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wNi5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4NzgzLCJleHAiOjE4MTM1MTQ3ODN9.E5KVhpwtTX6QL03ZLpMDjJk6jIgHjG_cDawCmC8Vmzk'
+    image_url: `${BASE_IMG}/img_06.png?width=300&format=webp`
   },
   {
     name: 'cable blancos de c a c',
@@ -113,7 +115,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-07',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_07.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wNy5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4NzkzLCJleHAiOjE4MTM1MTQ3OTN9.HF8UChQ2ZK9VdtqUxjazba1iXja3uHIJcTVgMp7GBLA'
+    image_url: `${BASE_IMG}/img_07.png?width=300&format=webp`
   },
   {
     name: 'cable (usb a ligning )',
@@ -125,7 +127,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-08',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_08.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wOC5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4ODA0LCJleHAiOjE4MTM1MTQ4MDR9.GgqP-Y0F5eqD_dvRKPsoWBKqtpHBOQf5Dl0nu_l6KCM'
+    image_url: `${BASE_IMG}/img_08.png?width=300&format=webp`
   },
   {
     name: 'Cable C a ligning',
@@ -137,7 +139,7 @@ const initialProducts = [
     initial_stock: 6,
     installments: 'Pago único',
     code: 'CAB-09',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_09.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18wOS5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4ODE0LCJleHAiOjE4MTM1MTQ4MTR9.zmQSCq0uYkHk1n_wLcgdTikgb7M6HVYMgzxsaRuXNR0'
+    image_url: `${BASE_IMG}/img_09.png?width=300&format=webp`
   },
   {
     name: 'Parlante',
@@ -149,7 +151,7 @@ const initialProducts = [
     initial_stock: 4,
     installments: 'Pago único',
     code: 'PAR-10',
-    image_url: 'https://nnerxfrbhuycktguvoza.supabase.co/storage/v1/object/sign/img_productos/img_10.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kNTAyYmViYy0zZjhkLTQwZjEtYmJmNy0yZDAxMjExMmM4OTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWdfcHJvZHVjdG9zL2ltZ18xMC5wbmciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxOTc4ODI1LCJleHAiOjE4MTM1MTQ4MjV9.I12inCYUe85d3HBoB_WFDWX-iscilXneAKIsb2xyyz8'
+    image_url: `${BASE_IMG}/img_10.png?width=300&format=webp`
   }
 ]
 
