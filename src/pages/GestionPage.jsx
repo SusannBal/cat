@@ -2,8 +2,8 @@ import { useState, useRef } from 'react'
 import { Plus, Pencil, Trash2, Upload, Loader } from 'lucide-react'
 import { Btn, Modal, Field, Input, Textarea, Select, Row, Spinner, Badge } from '../components/UI'
 
-const CATS = ['Cables y Audífonos','Computación','Celulares','Tablets','Cámaras','Accesorios','Audio','Gaming','Otro']
-const EMPTY = { name:'', model:'', category:'Cables y Audífonos', specs:'', price:'', buy_price:'', initial_stock:'', installments:'', code:'', image_url:'' }
+const CATS = ['Cables', 'Audífonos', 'Audio']
+const EMPTY = { name:'', model:'', category:'Cables', specs:'', price:'', buy_price:'', initial_stock:'', installments:'', code:'', image_url:'' }
 
 export default function GestionPage({ products, saveProduct, deleteProduct, uploadImage, soldMap, loading }) {
   const [open,      setOpen]      = useState(false)

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS productos (
   price         NUMERIC(10,2) NOT NULL,
   buy_price     NUMERIC(10,2),
   initial_stock INTEGER DEFAULT 0,
+  stock INTEGER DEFAULT 0,
   installments  TEXT,
   code          TEXT,
   image_url     TEXT,

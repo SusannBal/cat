@@ -19,7 +19,7 @@ async function imageUrlToBase64(url) {
   })
 }
 
-export async function exportCatalogPdf(products, filename = 'catalogo.pdf') {
+export async function exportCatalogPdf(products, filename = 'catalogo.pdf', stockOf = null) {
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const PW = 210, PH = 297
   const margin = 8, gap = 5
@@ -71,11 +71,14 @@ export async function exportCatalogPdf(products, filename = 'catalogo.pdf') {
 
   // ── Tarjeta ───────────────────────────────────────────────────
   function drawCard(p, cx, cy) {
-    const imgData = imgCache[p.id]
+    const imgData   = imgCache[p.id]
+    const stock     = stockOf ? stockOf(p) : null
+    const outOfStock = stock !== null && stock <= 0
 
-    // Fondo blanco + borde gris
-    pdf.setFillColor(255, 255, 255)
-    pdf.setDrawColor(185, 185, 185); pdf.setLineWidth(0.35)
+    // Fondo blanco + borde gris (atenuado si agotado)
+    pdf.setFillColor(outOfStock ? 245 : 255, outOfStock ? 245 : 255, outOfStock ? 245 : 255)
+    pdf.setDrawColor(outOfStock ? 210 : 185, outOfStock ? 210 : 185, outOfStock ? 210 : 185)
+    pdf.setLineWidth(0.35)
     pdf.roundedRect(cx, cy, cardW, cardH, 2.5, 2.5, 'FD')
 
     // ── COLUMNA DERECHA: imagen llena toda la altura ──────────
@@ -166,6 +169,18 @@ export async function exportCatalogPdf(products, filename = 'catalogo.pdf') {
       pdf.setFontSize(5); pdf.setFont('helvetica', 'normal')
       const il = pdf.splitTextToSize(p.installments, priceR * 2 - 2)
       pdf.text(il.slice(0, 2), pcx, pcy + 8.5, { align: 'center' })
+    }
+
+    // ── AGOTADO badge (top of text column, inside card) ──────
+    if (outOfStock) {
+      const bx = cx + pad
+      const by = cy + pad
+      const bw = textColW - 2
+      const bh = 7
+      pdf.setFillColor(210, 40, 40)
+      pdf.roundedRect(bx, by, bw, bh, 1.5, 1.5, 'F')
+      pdf.setFontSize(6.5); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(255, 255, 255)
+      pdf.text('AGOTADO', bx + bw / 2, by + 5, { align: 'center' })
     }
   }
 

@@ -61,10 +61,11 @@ export function useData() {
   }
 
   // ── Sales ─────────────────────────────────────────────────
-  async function registerSale(productId) {
+  async function registerSale(productId, seller = 'N') {
     const { error } = await supabase.from('ventas').insert([{
       product_id: productId,
       sold_at: new Date().toISOString(),
+      seller,
     }])
     if (error) throw error
     await fetchAll()

@@ -16,10 +16,17 @@ export default function CatalogPage({ products, stockOf, loading }) {
   const [category, setCategory] = useState(ALL)
   const [exporting, setExp]     = useState(false)
 
-  const categories = [ALL, ...new Set(products.map(p => p.category).filter(Boolean))]
+  const categories = [ALL, 'Cables', 'Audífonos', 'Audio']
+
+  // Map new filter names → what to match in DB (handles old category values)
+  const CAT_MATCH = {
+    'Cables':    ['Cables', 'Cables y Audífonos'],
+    'Audífonos': ['Audífonos'],
+    'Audio':     ['Audio'],
+  }
 
   const visible = products.filter(p => {
-    const matchCat = category === ALL || p.category === category
+    const matchCat = category === ALL || (CAT_MATCH[category] || [category]).includes(p.category)
     const q = search.toLowerCase()
     const matchQ = !q || p.name?.toLowerCase().includes(q) || p.specs?.toLowerCase().includes(q)
     return matchCat && matchQ
@@ -28,7 +35,7 @@ export default function CatalogPage({ products, stockOf, loading }) {
   async function handleExport() {
     setExp(true)
     try {
-      await exportCatalogPdf(visible, 'catalogo.pdf')
+      await exportCatalogPdf(visible, 'catalogo.pdf', stockOf)
     } catch (err) {
       console.error('Error exportando PDF:', err)
     }
@@ -138,7 +145,7 @@ export default function CatalogPage({ products, stockOf, loading }) {
                         overflow: 'hidden', borderBottom: '1px solid var(--gray-100)',
                       }}>
                         {p.image_url
-                          ? <img src={p.image_url} alt={p.name} crossOrigin="anonymous" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8 }} />
+                          ? <img src={p.image_url} alt={p.name} crossOrigin="anonymous" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8 }} />
                           : <span style={{ color: 'var(--gray-300)', fontSize: 12 }}>Sin imagen</span>
                         }
                       </div>

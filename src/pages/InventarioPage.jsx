@@ -6,7 +6,7 @@ import { Btn, Spinner } from '../components/UI'
 export default function InventarioPage({ products, sales, stockOf, soldMap, totalProfit, totalRevenue, registerSale, undoLastSale, loading }) {
   const [exporting, setExp] = useState(false)
   const [search,   setSearch] = useState('')
-  const [confirm,  setConfirm] = useState(null) // product id waiting confirm
+  const [confirm,  setConfirm] = useState(null) // { id, seller } waiting confirm
 
   async function handleExport() {
     setExp(true)
@@ -19,12 +19,12 @@ export default function InventarioPage({ products, sales, stockOf, soldMap, tota
   }
 
   async function handleSale(productId) {
-    if (confirm === productId) {
-      await registerSale(productId)
+    if (confirm?.id === productId) {
+      await registerSale(productId, confirm.seller)
       setConfirm(null)
     } else {
-      setConfirm(productId)
-      setTimeout(() => setConfirm(c => c === productId ? null : c), 3000)
+      setConfirm({ id: productId, seller: 'S' })
+      setTimeout(() => setConfirm(c => c?.id === productId ? null : c), 5000)
     }
   }
 
@@ -151,14 +151,31 @@ export default function InventarioPage({ products, sales, stockOf, soldMap, tota
                         <td style={{ padding:'12px 16px' }}>
                           {stock <= 0 ? (
                             <span style={{ fontSize:11, color:'var(--gray-400)' }}>Sin stock</span>
-                          ) : confirm === p.id ? (
-                            <div style={{ display:'flex', gap:6 }}>
-                              <Btn variant="danger" onClick={() => handleSale(p.id)} style={{ padding:'5px 12px', fontSize:12 }}>
-                                <Minus size={12}/> Confirmar
-                              </Btn>
-                              <Btn variant="ghost" onClick={() => setConfirm(null)} style={{ padding:'5px 10px', fontSize:12 }}>
-                                Cancelar
-                              </Btn>
+                          ) : confirm?.id === p.id ? (
+                            <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                              {/* Seller picker */}
+                              <div style={{ display:'flex', gap:4, alignItems:'center' }}>
+                                <span style={{ fontSize:10, color:'var(--gray-500)', fontWeight:700, whiteSpace:'nowrap' }}>¿Quién?</span>
+                                {['S','F','N'].map(opt => (
+                                  <button key={opt} onClick={() => setConfirm(c => ({ ...c, seller: opt }))}
+                                    style={{
+                                      width:28, height:28, borderRadius:6, border:'none', cursor:'pointer',
+                                      fontWeight:800, fontSize:12,
+                                      background: confirm.seller === opt ? 'var(--black)' : 'var(--gray-100)',
+                                      color: confirm.seller === opt ? 'var(--accent)' : 'var(--gray-500)',
+                                      transition:'all 0.15s',
+                                    }}>{opt}</button>
+                                ))}
+                              </div>
+                              {/* Action buttons */}
+                              <div style={{ display:'flex', gap:6 }}>
+                                <Btn variant="danger" onClick={() => handleSale(p.id)} style={{ padding:'5px 12px', fontSize:12 }}>
+                                  <Minus size={12}/> Confirmar
+                                </Btn>
+                                <Btn variant="ghost" onClick={() => setConfirm(null)} style={{ padding:'5px 10px', fontSize:12 }}>
+                                  Cancelar
+                                </Btn>
+                              </div>
                             </div>
                           ) : (
                             <Btn variant="success" onClick={() => handleSale(p.id)} style={{ padding:'5px 14px', fontSize:12 }}>

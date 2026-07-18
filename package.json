@@ -10,12 +10,14 @@
     "seed": "node seed.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "lucide-react": "^0.344.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@supabase/supabase-js": "^2.39.0",
-    "jspdf": "^2.5.1",
-    "html2canvas": "^1.4.1",
-    "lucide-react": "^0.344.0"
+    "react-virtualized-auto-sizer": "^2.0.3",
+    "react-window": "^2.2.7"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",

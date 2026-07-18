@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { BookOpen, Settings2, BarChart3 } from 'lucide-react'
+import { BookOpen, Settings2, BarChart3, ShoppingBag } from 'lucide-react'
 import { useData } from './hooks/useData'
 import CatalogPage   from './pages/CatalogPage'
 import GestionPage   from './pages/GestionPage'
 import InventarioPage from './pages/InventarioPage'
+import VentasPage    from './pages/VentasPage'
 
 const TABS = [
   { id: 'catalogo',   label: 'Catálogo',   icon: BookOpen   },
   { id: 'gestion',    label: 'Gestión',     icon: Settings2  },
   { id: 'inventario', label: 'Inventario',  icon: BarChart3  },
+  { id: 'ventas',     label: 'Ventas',      icon: ShoppingBag },
 ]
 
 export default function App() {
@@ -66,6 +68,7 @@ export default function App() {
         {tab === 'catalogo'   && <CatalogPage    {...data} />}
         {tab === 'gestion'    && <GestionPage    {...data} />}
         {tab === 'inventario' && <InventarioPage  {...data} />}
+        {tab === 'ventas'     && <VentasPage products={data.products} sales={data.sales} loading={data.loading} />}
       </div>
     </div>
   )
