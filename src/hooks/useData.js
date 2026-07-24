@@ -61,11 +61,17 @@ export function useData() {
   }
 
   // ── Sales ─────────────────────────────────────────────────
-  async function registerSale(productId, seller = 'N') {
+  async function registerSale(productId, seller = 'N', customPrice = null) {
+    const product = products.find(p => p.id === productId)
+    const priceToSave = customPrice !== null && customPrice !== ''
+      ? parseFloat(customPrice)
+      : (product?.price ?? null)
+
     const { error } = await supabase.from('ventas').insert([{
       product_id: productId,
       sold_at: new Date().toISOString(),
       seller,
+      price_at_sale: priceToSave,
     }])
     if (error) throw error
     await fetchAll()
@@ -92,18 +98,19 @@ export function useData() {
     return (product.initial_stock || 0) - (soldMap[product.id] || 0)
   }
 
-  // total profit across all products
-  const totalProfit = products.reduce((acc, p) => {
-    const sold = soldMap[p.id] || 0
-    if (!sold || !p.price) return acc
-    const profit = (p.price - (p.buy_price || 0)) * sold
-    return acc + profit
+  // total profit across all sales
+  const totalProfit = sales.reduce((acc, s) => {
+    const prod = products.find(p => p.id === s.product_id)
+    if (!prod) return acc
+    const salePrice = s.price_at_sale ?? prod.price ?? 0
+    return acc + (salePrice - (prod.buy_price || 0))
   }, 0)
 
   // total revenue
-  const totalRevenue = products.reduce((acc, p) => {
-    const sold = soldMap[p.id] || 0
-    return acc + (p.price || 0) * sold
+  const totalRevenue = sales.reduce((acc, s) => {
+    const prod = products.find(p => p.id === s.product_id)
+    const salePrice = s.price_at_sale ?? prod?.price ?? 0
+    return acc + salePrice
   }, 0)
 
   return {

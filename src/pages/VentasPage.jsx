@@ -10,18 +10,20 @@ export default function VentasPage({ products, sales, loading }) {
   // Sales filtered by seller
   const filteredSales = filter === 'all' ? sales : sales.filter(s => s.seller === filter)
 
-  // Stats per seller
+  // Stats per seller — uses price_at_sale when available
   function sellerStats(sellerKey) {
     const sellerSales = sellerKey === 'all' ? sales : sales.filter(s => s.seller === sellerKey)
     const units = sellerSales.length
     const revenue = sellerSales.reduce((acc, s) => {
       const prod = products.find(p => p.id === s.product_id)
-      return acc + (prod?.price || 0)
+      const salePrice = s.price_at_sale ?? prod?.price ?? 0
+      return acc + salePrice
     }, 0)
     const profit = sellerSales.reduce((acc, s) => {
       const prod = products.find(p => p.id === s.product_id)
       if (!prod) return acc
-      return acc + ((prod.price || 0) - (prod.buy_price || 0))
+      const salePrice = s.price_at_sale ?? prod.price ?? 0
+      return acc + (salePrice - (prod.buy_price || 0))
     }, 0)
     return { units, revenue, profit }
   }
@@ -118,12 +120,14 @@ export default function VentasPage({ products, sales, loading }) {
               {Object.entries(salesByDate).map(([date, daySales]) => {
                 const dayRevenue = daySales.reduce((acc, s) => {
                   const prod = products.find(p => p.id === s.product_id)
-                  return acc + (prod?.price || 0)
+                  const salePrice = s.price_at_sale ?? prod?.price ?? 0
+                  return acc + salePrice
                 }, 0)
                 const dayProfit = daySales.reduce((acc, s) => {
                   const prod = products.find(p => p.id === s.product_id)
                   if (!prod) return acc
-                  return acc + ((prod.price || 0) - (prod.buy_price || 0))
+                  const salePrice = s.price_at_sale ?? prod.price ?? 0
+                  return acc + (salePrice - (prod.buy_price || 0))
                 }, 0)
 
                 return (
@@ -172,12 +176,28 @@ export default function VentasPage({ products, sales, loading }) {
                               {s.seller || 'N'}
                             </span>
                             <div style={{ textAlign: 'right' }}>
-                              <p style={{ fontSize: 13, fontWeight: 800 }}>Bs. {prod?.price ?? '—'}</p>
-                              {prod?.buy_price != null && (
-                                <p style={{ fontSize: 10, color: 'var(--success)', fontWeight: 700 }}>
-                                  +Bs. {(prod.price - prod.buy_price).toFixed(2)}
-                                </p>
-                              )}
+                              {(() => {
+                                const salePrice = s.price_at_sale ?? prod?.price
+                                const isCustom = s.price_at_sale != null && prod && s.price_at_sale !== prod.price
+                                return (
+                                  <>
+                                    <p style={{ fontSize: 13, fontWeight: 800 }}>
+                                      Bs. {salePrice ?? '—'}
+                                      {isCustom && (
+                                        <span title={`Precio de catálogo actual: Bs. ${prod.price}`}
+                                          style={{ marginLeft: 4, fontSize: 9, background: '#e8f4fd', color: '#2196f3', borderRadius: 3, padding: '1px 5px', fontWeight: 700, verticalAlign: 'middle' }}>
+                                          esp.
+                                        </span>
+                                      )}
+                                    </p>
+                                    {prod?.buy_price != null && salePrice != null && (
+                                      <p style={{ fontSize: 10, color: 'var(--success)', fontWeight: 700 }}>
+                                        +Bs. {(salePrice - prod.buy_price).toFixed(2)}
+                                      </p>
+                                    )}
+                                  </>
+                                )
+                              })()}
                             </div>
                           </div>
                         )

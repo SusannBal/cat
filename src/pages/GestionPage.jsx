@@ -5,7 +5,7 @@ import { Btn, Modal, Field, Input, Textarea, Select, Row, Spinner, Badge } from 
 const CATS = ['Cables', 'Audífonos', 'Audio']
 const EMPTY = { name:'', model:'', category:'Cables', specs:'', price:'', buy_price:'', initial_stock:'', installments:'', code:'', image_url:'' }
 
-export default function GestionPage({ products, saveProduct, deleteProduct, uploadImage, soldMap, loading }) {
+export default function GestionPage({ products, sales = [], saveProduct, deleteProduct, uploadImage, soldMap, loading }) {
   const [open,      setOpen]      = useState(false)
   const [form,      setForm]      = useState(EMPTY)
   const [saving,    setSaving]    = useState(false)
@@ -77,7 +77,11 @@ export default function GestionPage({ products, saveProduct, deleteProduct, uplo
           {visible.map(p => {
             const sold  = soldMap[p.id] || 0
             const stock = (p.initial_stock || 0) - sold
-            const profit = p.buy_price ? ((p.price - p.buy_price) * sold).toFixed(2) : null
+            const productSales = sales.filter(s => s.product_id === p.id)
+            const profit = p.buy_price != null ? productSales.reduce((acc, s) => {
+              const salePrice = s.price_at_sale ?? p.price ?? 0
+              return acc + (salePrice - p.buy_price)
+            }, 0).toFixed(2) : null
 
             return (
               <div key={p.id} style={{

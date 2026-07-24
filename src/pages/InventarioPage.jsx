@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FileDown, Minus, RotateCcw, TrendingUp, DollarSign, ShoppingBag, Package } from 'lucide-react'
+import { FileDown, Minus, RotateCcw, TrendingUp, DollarSign, ShoppingBag, Package, Pencil } from 'lucide-react'
 import { exportCatalogPdf } from '../lib/exportPdf'
 import { Btn, Spinner } from '../components/UI'
 
@@ -20,11 +20,11 @@ export default function InventarioPage({ products, sales, stockOf, soldMap, tota
 
   async function handleSale(productId) {
     if (confirm?.id === productId) {
-      await registerSale(productId, confirm.seller)
+      await registerSale(productId, confirm.seller, confirm.price)
       setConfirm(null)
     } else {
-      setConfirm({ id: productId, seller: 'S' })
-      setTimeout(() => setConfirm(c => c?.id === productId ? null : c), 5000)
+      const prod = products.find(p => p.id === productId)
+      setConfirm({ id: productId, seller: 'S', price: prod?.price ?? '' })
     }
   }
 
@@ -152,27 +152,43 @@ export default function InventarioPage({ products, sales, stockOf, soldMap, tota
                           {stock <= 0 ? (
                             <span style={{ fontSize:11, color:'var(--gray-400)' }}>Sin stock</span>
                           ) : confirm?.id === p.id ? (
-                            <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                            <div style={{ display:'flex', flexDirection:'column', gap:6, background:'var(--gray-50)', padding:'8px 10px', borderRadius:'var(--radius-sm)', border:'1px solid var(--gray-200)' }}>
                               {/* Seller picker */}
                               <div style={{ display:'flex', gap:4, alignItems:'center' }}>
                                 <span style={{ fontSize:10, color:'var(--gray-500)', fontWeight:700, whiteSpace:'nowrap' }}>¿Quién?</span>
                                 {['S','F','N'].map(opt => (
                                   <button key={opt} onClick={() => setConfirm(c => ({ ...c, seller: opt }))}
                                     style={{
-                                      width:28, height:28, borderRadius:6, border:'none', cursor:'pointer',
-                                      fontWeight:800, fontSize:12,
-                                      background: confirm.seller === opt ? 'var(--black)' : 'var(--gray-100)',
-                                      color: confirm.seller === opt ? 'var(--accent)' : 'var(--gray-500)',
+                                      width:24, height:24, borderRadius:5, border:'none', cursor:'pointer',
+                                      fontWeight:800, fontSize:11,
+                                      background: confirm.seller === opt ? 'var(--black)' : 'var(--gray-200)',
+                                      color: confirm.seller === opt ? 'var(--accent)' : 'var(--gray-600)',
                                       transition:'all 0.15s',
                                     }}>{opt}</button>
                                 ))}
                               </div>
+                              {/* Custom price picker with Pencil */}
+                              <div style={{ display:'flex', gap:4, alignItems:'center' }}>
+                                <span style={{ fontSize:10, color:'var(--gray-500)', fontWeight:700, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:2 }}>
+                                  <Pencil size={10}/> Precio:
+                                </span>
+                                <div style={{ display:'flex', alignItems:'center', background:'var(--white)', border:'1px solid var(--gray-300)', borderRadius:4, padding:'1px 5px' }}>
+                                  <span style={{ fontSize:10, fontWeight:700, color:'var(--gray-500)', marginRight:2 }}>Bs.</span>
+                                  <input
+                                    type="number"
+                                    step="0.5"
+                                    value={confirm.price ?? ''}
+                                    onChange={e => setConfirm(c => ({ ...c, price: e.target.value }))}
+                                    style={{ width:50, border:'none', outline:'none', fontSize:11, fontWeight:800, background:'transparent' }}
+                                  />
+                                </div>
+                              </div>
                               {/* Action buttons */}
-                              <div style={{ display:'flex', gap:6 }}>
-                                <Btn variant="danger" onClick={() => handleSale(p.id)} style={{ padding:'5px 12px', fontSize:12 }}>
-                                  <Minus size={12}/> Confirmar
+                              <div style={{ display:'flex', gap:4 }}>
+                                <Btn variant="danger" onClick={() => handleSale(p.id)} style={{ padding:'4px 8px', fontSize:11 }}>
+                                  <Minus size={11}/> Confirmar
                                 </Btn>
-                                <Btn variant="ghost" onClick={() => setConfirm(null)} style={{ padding:'5px 10px', fontSize:12 }}>
+                                <Btn variant="ghost" onClick={() => setConfirm(null)} style={{ padding:'4px 6px', fontSize:11 }}>
                                   Cancelar
                                 </Btn>
                               </div>
@@ -225,12 +241,14 @@ export default function InventarioPage({ products, sales, stockOf, soldMap, tota
               {Object.entries(salesByDate).map(([date, daySales]) => {
                 const dayRevenue = daySales.reduce((acc, s) => {
                   const prod = products.find(p => p.id === s.product_id)
-                  return acc + (prod?.price || 0)
+                  const salePrice = s.price_at_sale ?? prod?.price ?? 0
+                  return acc + salePrice
                 }, 0)
                 const dayProfit = daySales.reduce((acc, s) => {
                   const prod = products.find(p => p.id === s.product_id)
                   if (!prod) return acc
-                  return acc + ((prod.price || 0) - (prod.buy_price || 0))
+                  const salePrice = s.price_at_sale ?? prod.price ?? 0
+                  return acc + (salePrice - (prod.buy_price || 0))
                 }, 0)
 
                 return (
@@ -268,12 +286,28 @@ export default function InventarioPage({ products, sales, stockOf, soldMap, tota
                               <p style={{ fontSize:11, color:'var(--gray-500)' }}>{time}</p>
                             </div>
                             <div style={{ textAlign:'right' }}>
-                              <p style={{ fontSize:13, fontWeight:800 }}>Bs. {prod?.price ?? '—'}</p>
-                              {prod?.buy_price != null && (
-                                <p style={{ fontSize:10, color:'var(--success)', fontWeight:700 }}>
-                                  +Bs. {(prod.price - prod.buy_price).toFixed(2)}
-                                </p>
-                              )}
+                              {(() => {
+                                const salePrice = s.price_at_sale ?? prod?.price
+                                const isCustom = s.price_at_sale != null && prod && s.price_at_sale !== prod.price
+                                return (
+                                  <>
+                                    <p style={{ fontSize: 13, fontWeight: 800 }}>
+                                      Bs. {salePrice ?? '—'}
+                                      {isCustom && (
+                                        <span title={`Precio de catálogo actual: Bs. ${prod.price}`}
+                                          style={{ marginLeft: 4, fontSize: 9, background: '#e8f4fd', color: '#2196f3', borderRadius: 3, padding: '1px 5px', fontWeight: 700, verticalAlign: 'middle' }}>
+                                          esp.
+                                        </span>
+                                      )}
+                                    </p>
+                                    {prod?.buy_price != null && salePrice != null && (
+                                      <p style={{ fontSize: 10, color: 'var(--success)', fontWeight: 700 }}>
+                                        +Bs. {(salePrice - prod.buy_price).toFixed(2)}
+                                      </p>
+                                    )}
+                                  </>
+                                )
+                              })()}
                             </div>
                             <Btn variant="ghost" onClick={() => undoLastSale(s.product_id)}
                               style={{ padding:'4px 8px', fontSize:11 }}
