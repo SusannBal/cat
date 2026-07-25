@@ -54,7 +54,10 @@ export function useData() {
   async function uploadImage(file) {
     const ext      = file.name.split('.').pop()
     const filename = `${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('productos').upload(filename, file, { upsert: true })
+    const { error } = await supabase.storage.from('productos').upload(filename, file, {
+      cacheControl: '360000', // Guarda la imagen en la caché del navegador por ~4 días (o 31536000 para 1 año)
+      upsert: true
+    })
     if (error) throw error
     const { data } = supabase.storage.from('productos').getPublicUrl(filename)
     return data.publicUrl
